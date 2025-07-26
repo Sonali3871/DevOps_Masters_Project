@@ -73,9 +73,6 @@ This task introduces secure Kubernetes deployments using:
 ├── outputs.tf
 └── README.md
 
-yaml
-Copy
-Edit
 
 ---
 
@@ -84,7 +81,9 @@ Edit
 ### 1. Clone This Repository
 
 git clone https://github.com/<your-username>/DevOps_Masters_Project.git
+
 cd DevOps_Masters_Project
+
 2. Configure Your AWS CLI and GitHub Token
 AWS CLI must be configured (aws configure)
 
