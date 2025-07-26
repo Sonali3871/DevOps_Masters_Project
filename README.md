@@ -1,7 +1,5 @@
 # DevOps-Masters-Project
 
-# DevOps Masters Project 🚀
-
 This project automates the CI/CD pipeline using AWS services and GitHub Actions. It also integrates secure Kubernetes deployments using Sealed Secrets and Terraform-managed infrastructure.
 
 ---
