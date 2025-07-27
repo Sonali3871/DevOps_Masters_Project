@@ -104,6 +104,11 @@ resource "aws_iam_role_policy_attachment" "codedeploy_ec2_permissions" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "codedeploy_ec2" {
+  role       = aws_iam_role.codedeploy_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
 
 resource "aws_iam_policy" "codebuild_artifact_put_policy" {
   name = "codebuild-s3-put-artifacts"
