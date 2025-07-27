@@ -1,12 +1,14 @@
+#buildspec.yml
 version: 0.2
 
 phases:
   install:
-    commands:
-      - echo "Installing tools..."
+    runtime-versions:
+      nodejs: 16
   build:
     commands:
-      - echo "Build phase running successfully!"
+      - echo "Build complete!"
+
 artifacts:
   files:
     - '**/*'
