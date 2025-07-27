@@ -10,8 +10,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Run tfsec on Terraform files
+      - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
 
   trivy:
@@ -19,8 +18,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Scan Docker image with Trivy
+      - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'nginx:latest'
@@ -33,22 +31,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
       - name: Install kubeseal
         run: |
           wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.30.0/kubeseal-0.30.0-linux-amd64.tar.gz
           tar -xvzf kubeseal-0.30.0-linux-amd64.tar.gz
           sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 
-      - name: Apply sealed secret
-        run: |
-          kubectl apply -f sealed-secret.yaml
-
-      - name: Terraform Deploy
+      - name: Terraform Apply
         run: |
           terraform init
           terraform apply -auto-approve
