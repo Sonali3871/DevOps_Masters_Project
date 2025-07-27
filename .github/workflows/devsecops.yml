@@ -1,4 +1,37 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tfsec:
+    name: Run tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+  trivy:
+    name: Run Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Scan Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'nginx:latest'
+          format: 'table'
+
   deploy:
+    name: Deploy Infrastructure
     needs: [tfsec, trivy]
     runs-on: ubuntu-latest
     steps:
