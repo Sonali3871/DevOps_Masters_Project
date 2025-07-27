@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
 
@@ -21,6 +22,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:
@@ -29,7 +31,7 @@ jobs:
 
   deploy:
     name: Deploy Infrastructure
-    needs: [trivy]   # optional: add tfsec too if it succeeds later
+    needs: [tfsec, trivy]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -65,4 +67,7 @@ jobs:
       - name: Terraform Init and Apply
         run: |
           terraform init
-          terraform apply -auto-approve
+          terraform apply -auto-approve \
+            -var="github_token=${{ secrets.GITHUB_TOKEN }}" \
+            -var="github_owner=${{ secrets.GITHUB_OWNER }}" \
+            -var="github_repo=${{ secrets.GITHUB_REPO }}"
