@@ -8,6 +8,14 @@ resource "aws_codedeploy_deployment_group" "group" {
   deployment_group_name = "devops-deploy-group"
   service_role_arn      = aws_iam_role.codedeploy_role.arn
 
+  ec2_tag_set {
+    ec2_tag_filter {
+      key   = "Environment"
+      value = "Dev"
+      type  = "KEY_AND_VALUE"
+    }
+  }
+
   deployment_style {
     deployment_option = "WITHOUT_TRAFFIC_CONTROL"
     deployment_type   = "IN_PLACE"
