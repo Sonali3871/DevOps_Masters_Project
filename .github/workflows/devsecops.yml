@@ -68,6 +68,6 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve \
-            -var="github_token=${{ secrets.GITHUB_TOKEN }}" \
-            -var="github_owner=${{ secrets.GITHUB_OWNER }}" \
-            -var="github_repo=${{ secrets.GITHUB_REPO }}"
+            -var="github_token=${{ secrets.TOKEN }}" \
+            -var="github_owner=${{ secrets.OWNER }}" \
+            -var="github_repo=${{ secrets.REPO }}"
