@@ -2,50 +2,53 @@ name: DevSecOps Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  security-scan:
-    name: Security Scans
+  tfsec:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Run tfsec (Terraform Security)
+      - name: Run tfsec on Terraform files
         uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          working_directory: .
 
-      - name: Run Trivy (Docker Image Scan)
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'c:\Users\HP\Downloads\devon-beard-2FL8rHzKht8-unsplash.jpg'  # image
+          image-ref: 'nginx:latest'
+          format: 'table'
 
   deploy:
-    name: Deploy Sealed Secrets
+    needs: [tfsec, trivy]
     runs-on: ubuntu-latest
-    needs: security-scan
-
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup kubectl
+      - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: '1.29.0'
+          version: 'latest'
 
-      - name: Set up kubeconfig
+      - name: Install kubeseal
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 --decode > ~/.kube/config
+          wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.30.0/kubeseal-0.30.0-linux-amd64.tar.gz
+          tar -xvzf kubeseal-0.30.0-linux-amd64.tar.gz
+          sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 
-      - name: Apply Sealed Secrets
+      - name: Apply sealed secret
         run: |
-          kubectl apply -f k8s/sealed-secret.yaml
+          kubectl apply -f sealed-secret.yaml
+
+      - name: Terraform Deploy
+        run: |
+          terraform init
+          terraform apply -auto-approve
